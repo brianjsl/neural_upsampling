@@ -69,15 +69,22 @@ def generator(config):
 
     for k in data_keys:
         for ids in [train_ids, val_ids, test_ids]:
-            for id in ids:
+            for new_id, id in enumerate(ids):
                 im_name = str(id)+'_'+data_names[k]+'.jpg'
+                new_im_name = str(new_id)+'_'+data_names[k]+'.jpg'
                 image = os.path.join(config.raw_path, k,'dog', im_name)
                 if ids == train_ids:
                     shutil.copy(image, os.path.join(config.data_path, data_names[k], 'train'))
+                    os.rename(os.path.join(config.data_path, data_names[k], 'train',im_name), \
+                        os.path.join(config.data_path, data_names[k], 'train',new_im_name))
                 elif ids == val_ids:
                     shutil.copy(image, os.path.join(config.data_path, data_names[k], 'val'))
+                    os.rename(os.path.join(config.data_path, data_names[k], 'val',im_name), \
+                        os.path.join(config.data_path, data_names[k], 'val',new_im_name))
                 elif ids == test_ids:
                     shutil.copy(image, os.path.join(config.data_path, data_names[k], 'test')) 
+                    os.rename(os.path.join(config.data_path, data_names[k], 'test',im_name), \
+                        os.path.join(config.data_path, data_names[k], 'test',new_im_name))
 
 def argparser():   
     '''
