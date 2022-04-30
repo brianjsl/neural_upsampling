@@ -1,4 +1,4 @@
-# 6.869 Advances in Computer Vision Final Project (Spring 2022)
+# 6.869 Computer Vision Final Project (Spring 2022)
 By Brian Lee and Srinath Mahnakali
 
 ## Description
@@ -10,7 +10,18 @@ of the [FFHQ1024 Dataset](https://github.com/NVlabs/ffhq-dataset):
 * SRCNNs using the implementation gvien [here](https://github.com/yjn870/SRCNN-pytorch)
 * Training a Neural Field and then sub-sampling with smaller intervals
 
+## Required Packages
+Make sure you have unrar installed. On mac, run 
+```
+brew install rar
+```
+
 ## Generating Data
+To replicate the experiment, run generator.py as follows with the random seed 123:
+```
+python3 generator.py --dsize 120 --train_val_test_size 100 10 10 --random_seed 123 output_folder ./data
+```
+The corresponding images will be stored in the 'data' folder. 
 
 ## Training the SRCNN
 
