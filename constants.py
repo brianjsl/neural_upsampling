@@ -7,4 +7,5 @@ def num_files(data_class, set_name):
     dir = './data/working/'+str(data_class)+'/'+set_name
     return len(os.listdir(dir))
 
-print(num_files(64, 'train'))
+def num_coords(data_class):
+    return data_class**2

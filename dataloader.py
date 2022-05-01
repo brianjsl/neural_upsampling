@@ -10,6 +10,8 @@ from torchvision.io import read_image
 from torch.utils.data import DataLoader
 from PIL import Image
 import matplotlib.pyplot as plt
+from constants import num_files, num_coords
+
 
 class DogData(Dataset):
     '''
@@ -31,11 +33,27 @@ class DogData(Dataset):
     def __len__(self):
         if self.set_name == 'train':
             if self.with_coords:
-                
+                file_num = sum([num_files(self.data_class, i) for i in ['train', 'test', 'val']])
+                return num_coords(self.data_class)*file_num
+            else:
+                return num_files(self.data_class, 'train')
         elif self.set_name == 'val':
-            pass
+            if self.with_coords:
+                return num_coords(self.data_class)*num_files(self.data_class, 'val')
+            else:
+                return num_files(self.data_class, 'val')
         elif self.set_name == 'test':
+            if self.with_coords:
+                return num_coords(self.data_class)*num_files(self.data_class, 'test') 
+            else:
+                return num_files(self.data_class, 'test')
+
+    def __getitem__(self, idx: int):
+        if self.with_coords:
+            pass
+        else:
             pass
 
-    def __getitem__(self):
-        pass
+if __name__ == '__main__':
+    sample = DogData(64, None, 'train', True)
+    print(len(sample))
