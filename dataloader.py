@@ -42,7 +42,11 @@ class DogData(Dataset):
         if self.with_coords:
             pass
         else:
-            pass
+            image_path = self.img_dir + '/' + self.set_name + '_' + str(idx) + '_' + str(self.data_class) + '.jpg'
+            image = Image.open(image_path)
+            image = 255*ToTensor()(image)
+            return image
+
 
 if __name__ == '__main__':
     sample = DogData(64, None, 'train', False)
