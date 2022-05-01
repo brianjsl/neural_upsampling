@@ -4,7 +4,7 @@ By Brian Lee and Srinath Mahnakali
 ## Description
 Pytorch implementation for training neural implicit representations for single-image
 super-resolution. Compares the following three upsampling models on a downsampled subset 
-of the [FFHQ1024 Dataset](https://github.com/NVlabs/ffhq-dataset):
+of the 'dog' class in the [Linnaeus 5 dataset](http://chaladze.com/l5/):
 
 * Bilinear interpolation
 * SRCNNs using the implementation gvien [here](https://github.com/yjn870/SRCNN-pytorch)
