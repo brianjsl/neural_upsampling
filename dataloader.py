@@ -44,10 +44,65 @@ class DogData(Dataset):
         else:
             image_path = self.img_dir + '/' + self.set_name + '_' + str(idx) + '_' + str(self.data_class) + '.jpg'
             image = Image.open(image_path)
-            image = 255*ToTensor()(image)
+            image = ToTensor()(image)
             return image
 
+#################
+## SRCNN stuff ##
+#################
+
+class SRCNNDataset(DogData):
+    def __init__(self, transforms, set_name: str):
+        '''
+        Dataset for SRCNN: consists of two datasets of 64x64 and target 256x256 images
+        transforms: transforms to apply
+        set name: set name (test, train, val)
+        '''
+        assert set_name in ['test', 'train', 'val']
+        self.img_data = DogData(64, transforms, set_name, with_coords=False)
+        self.target_data = DogData(256, transforms, set_name, with_coords=False)
+    
+    def __len__(self):
+        assert len(self.img_data) == len(self.target_data)
+        return len(self.img_data)
+    
+    def __getitem__(self, idx: int):
+        """
+        Returns tuple of downscaled image, ground truth high resolution image
+        """
+        return self.img_data[idx], self.target_data[idx]
+
+def get_srcnn_dataloaders(batch_size=5):
+    train_dataset = SRCNNDataset(None, 'train')
+    val_dataset = SRCNNDataset(None, 'val')
+    test_dataset = SRCNNDataset(None, 'test')
+    train_dataloader = torch.utils.data.DataLoader(
+        train_dataset,
+        batch_size=batch_size,
+        shuffle=True,  # shuffle training set
+        pin_memory=True,  # pin_memory allows faster transfer from CPU to GPU
+    )
+    val_dataloader = torch.utils.data.DataLoader(
+        val_dataset,
+        batch_size=batch_size,
+        shuffle=False,
+        pin_memory=True,
+    )
+    test_dataloader = torch.utils.data.DataLoader(
+        test_dataset,
+        batch_size=batch_size,
+        shuffle=False,
+        pin_memory=True,
+    )
+    dataloaders = {
+        'train': train_dataloader,
+        'val': val_dataloader,
+        'test': test_dataloader
+    }
+    return dataloaders
 
 if __name__ == '__main__':
-    sample = DogData(64, None, 'train', False)
-    print(len(sample))
+    # sample = DogData(64, None, 'train', False)
+    # print(len(sample))
+    srcnn_sample = SRCNNDataset(None, 'train')
+    print(len(srcnn_sample))
