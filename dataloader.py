@@ -32,21 +32,11 @@ class DogData(Dataset):
 
     def __len__(self):
         if self.set_name == 'train':
-            if self.with_coords:
-                file_num = sum([num_files(self.data_class, i) for i in ['train', 'test', 'val']])
-                return num_coords(self.data_class)*file_num
-            else:
-                return num_files(self.data_class, 'train')
+            return num_files(self.data_class, 'train')
         elif self.set_name == 'val':
-            if self.with_coords:
-                return num_coords(self.data_class)*num_files(self.data_class, 'val')
-            else:
-                return num_files(self.data_class, 'val')
+            return num_files(self.data_class, 'val')
         elif self.set_name == 'test':
-            if self.with_coords:
-                return num_coords(self.data_class)*num_files(self.data_class, 'test') 
-            else:
-                return num_files(self.data_class, 'test')
+            return num_files(self.data_class, 'test')
 
     def __getitem__(self, idx: int):
         if self.with_coords:
@@ -55,5 +45,5 @@ class DogData(Dataset):
             pass
 
 if __name__ == '__main__':
-    sample = DogData(64, None, 'train', True)
+    sample = DogData(64, None, 'train', False)
     print(len(sample))
