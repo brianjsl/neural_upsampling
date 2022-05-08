@@ -13,7 +13,7 @@ from time import time
 #device and model
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 srcnn_model = SRCNN()
-srcnn_model.load_state_dict(torch.load('srcnn_model/weights_best_val_acc.pt'))
+srcnn_model.load_state_dict(torch.load('srcnn_model/weights_best_val_acc.pt', map_location='cpu'))
 
 #get dataloaders
 all_dataloaders = get_srcnn_dataloaders()
@@ -79,34 +79,34 @@ def get_bilinear_statistics(low_res, high_res):
 if __name__ == '__main__':
     srcnn_sample = SRCNNDataset(None, 'test')
     image_id = 6
-    num_images = len(srcnn_sample)
-    srcnn_stats_list, bilin_stats_list = np.empty([num_images,3]), np.empty([num_images,3])
-    for image_id in range(num_images):
-        low_res = srcnn_sample[image_id][0]
-        test = srcnn_sample[image_id][1]
-        srcnn_stats = get_srcnn_statistics(srcnn_model, low_res, test)
-        bilin_stats = get_bilinear_statistics(low_res, test)
-        srcnn_stats_list[image_id] = srcnn_stats
-        bilin_stats_list[image_id] = bilin_stats
-    avg_srcnn_stats = np.mean(srcnn_stats_list, 0)
-    avg_bilin_stats = np.mean(bilin_stats_list, 0)
-    print(avg_srcnn_stats)
-    print(avg_bilin_stats)
-    # #low-res image
-    # low_res = srcnn_sample[image_id][0]
-    # plt.imshow(low_res.permute(1,2,0))
-    # plt.show()
-    # #low-res image interpolated
-    # batch_image = low_res[None]
-    # preprocessed_image = F.interpolate(batch_image, scale_factor=4, mode="bilinear")
-    # bilinear_image = preprocessed_image.squeeze()
-    # plt.imshow(bilinear_image.permute(1,2,0))
-    # plt.show()
-    # #upsampled image
-    # upsampled = upsample_image(srcnn_model, low_res)
-    # plt.imshow(upsampled.permute(1,2,0))
-    # plt.show()
-    # #ground truth image
-    # test = srcnn_sample[image_id][1]
-    # plt.imshow(test.permute(1,2,0))
-    # plt.show()
+    # num_images = len(srcnn_sample)
+    # srcnn_stats_list, bilin_stats_list = np.empty([num_images,3]), np.empty([num_images,3])
+    # for image_id in range(num_images):
+    #     low_res = srcnn_sample[image_id][0]
+    #     test = srcnn_sample[image_id][1]
+    #     srcnn_stats = get_srcnn_statistics(srcnn_model, low_res, test)
+    #     bilin_stats = get_bilinear_statistics(low_res, test)
+    #     srcnn_stats_list[image_id] = srcnn_stats
+    #     bilin_stats_list[image_id] = bilin_stats
+    # avg_srcnn_stats = np.mean(srcnn_stats_list, 0)
+    # avg_bilin_stats = np.mean(bilin_stats_list, 0)
+    # print(avg_srcnn_stats)
+    # print(avg_bilin_stats)
+    #low-res image
+    low_res = srcnn_sample[image_id][0]
+    plt.imshow(low_res.permute(1,2,0))
+    plt.show()
+    #low-res image interpolated
+    batch_image = low_res[None]
+    preprocessed_image = F.interpolate(batch_image, scale_factor=4, mode="bilinear")
+    bilinear_image = preprocessed_image.squeeze()
+    plt.imshow(bilinear_image.permute(1,2,0))
+    plt.show()
+    #upsampled image
+    upsampled = upsample_image(srcnn_model, low_res)
+    plt.imshow(upsampled.permute(1,2,0))
+    plt.show()
+    #ground truth image
+    test = srcnn_sample[image_id][1]
+    plt.imshow(test.permute(1,2,0))
+    plt.show()

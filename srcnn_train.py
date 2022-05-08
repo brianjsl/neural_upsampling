@@ -17,8 +17,7 @@ tqdm = partial(tqdm, position=0, leave=True)
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 #get dataloaders
-all_dataloaders = dataloader.get_srcnn_dataloaders(batch_size=1)
-
+all_dataloaders = dataloader.get_srcnn_dataloaders(batch_size=10)
 
 #train the srcnn
 def train_model(model, dataloaders, criterion, optimizer, save_dir = None, save_all_epochs=False, num_epochs=25):

@@ -12,7 +12,6 @@ from PIL import Image
 import matplotlib.pyplot as plt
 from constants import num_files, num_coords
 
-
 class DogData(Dataset):
     '''
     Dataset of Dog Images
@@ -38,13 +37,16 @@ class DogData(Dataset):
         elif self.set_name == 'test':
             return num_files(self.data_class, 'test')
 
-    def __getitem__(self, idx: int):
+    def __getitem__(self, idx: int, coord = None):
+        image_path = self.img_dir + '/' + self.set_name + '_' + str(idx) + '_' + str(self.data_class) + '.jpg'
+        image = Image.open(image_path)
+        if self.transforms:
+            image = self.transforms(image)
+
+        coord = torch.Tensor([coord[0], coord[1]])
         if self.with_coords:
-            pass
-        else:
-            image_path = self.img_dir + '/' + self.set_name + '_' + str(idx) + '_' + str(self.data_class) + '.jpg'
-            image = Image.open(image_path)
-            image = ToTensor()(image)
+            return (image, coord)
+        else:  
             return image
 
 #################
