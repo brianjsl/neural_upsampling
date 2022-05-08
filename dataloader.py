@@ -5,7 +5,7 @@ import torch
 from torch.utils.data import Dataset, DataLoader
 from torchvision import datasets
 from torchvision import transforms, utils
-from torchvision.transforms import ToTensor
+from torchvision.transforms import ToTensor, Compose, Normalize
 from torchvision.io import read_image
 from torch.utils.data import DataLoader
 from PIL import Image
@@ -44,10 +44,12 @@ class DogData(Dataset):
             return num_files(self.data_class, 'test')
 
     def __getitem__(self, idx: tuple):
-        
-
         image_path = self.img_dir + '/' + self.set_name + '_' + str(idx) + '_' + str(self.data_class) + '.jpg'
-        image = Image.open(image_path) 
+        image = Image.open(image_path)
+        image = ToTensor()(image)
+        if self.transforms:
+            image = self.transforms(image)
+        return image
 
 
 
@@ -64,7 +66,7 @@ class SRCNNDataset(DogData):
         '''
         assert set_name in ['test', 'train', 'val']
         self.img_data = DogData(64, transforms, set_name, with_coords=False)
-        self.target_data = DogData(256, transforms, set_name, with_coords=False)
+        self.target_data = DogData(256, None, set_name, with_coords=False)
     
     def __len__(self):
         assert len(self.img_data) == len(self.target_data)

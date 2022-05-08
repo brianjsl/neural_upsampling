@@ -78,7 +78,6 @@ def get_bilinear_statistics(low_res, high_res):
 
 if __name__ == '__main__':
     srcnn_sample = SRCNNDataset(None, 'test')
-    image_id = 6
     # num_images = len(srcnn_sample)
     # srcnn_stats_list, bilin_stats_list = np.empty([num_images,3]), np.empty([num_images,3])
     # for image_id in range(num_images):
@@ -92,13 +91,14 @@ if __name__ == '__main__':
     # avg_bilin_stats = np.mean(bilin_stats_list, 0)
     # print(avg_srcnn_stats)
     # print(avg_bilin_stats)
+    image_id = 6
     #low-res image
     low_res = srcnn_sample[image_id][0]
     plt.imshow(low_res.permute(1,2,0))
     plt.show()
     #low-res image interpolated
     batch_image = low_res[None]
-    preprocessed_image = F.interpolate(batch_image, scale_factor=4, mode="bilinear")
+    preprocessed_image = F.interpolate(batch_image, scale_factor=4, mode="bilinear", align_corners=False)
     bilinear_image = preprocessed_image.squeeze()
     plt.imshow(bilinear_image.permute(1,2,0))
     plt.show()
