@@ -70,7 +70,7 @@ def train_model(model, dataloaders, criterion, optimizer, save_dir = None, save_
                 # track history if only in train
                 with torch.set_grad_enabled(phase == 'train'):
                     # Get model outputs and calculate loss
-                    preprocessed_images = F.interpolate(images, scale_factor=4, mode='bicubic')
+                    preprocessed_images = F.interpolate(images, scale_factor=4, mode='bicubic', align_corners=False)
                     outputs = model(preprocessed_images)
                     loss = criterion(outputs, targets)
 
