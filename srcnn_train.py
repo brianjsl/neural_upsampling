@@ -17,7 +17,7 @@ tqdm = partial(tqdm, position=0, leave=True)
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 #get dataloaders
-all_dataloaders = dataloader.get_srcnn_dataloaders(batch_size=1)
+all_dataloaders = dataloader.get_srcnn_dataloaders(batch_size=10)
 
 
 #train the srcnn
@@ -71,6 +71,7 @@ def train_model(model, dataloaders, criterion, optimizer, save_dir = None, save_
                 with torch.set_grad_enabled(phase == 'train'):
                     # Get model outputs and calculate loss
                     preprocessed_images = F.interpolate(images, scale_factor=4, mode='bicubic', align_corners=False)
+                    model = model.to(device)
                     outputs = model(preprocessed_images)
                     loss = criterion(outputs, targets)
 
