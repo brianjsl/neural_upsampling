@@ -28,6 +28,11 @@ The directory will contain two model weights which can be used later, 'weights_b
 ## Training the Neural Field
 
 ## Recreating Experiments
+Once the SRCNN is trained, run srcnn_experiments.py:
+```
+python3 srcnn_experiments.py
+```
+It will print the average time, MSE, and PSNR of the SRCNN and bilinear interpolation.
 
 ## Miscallaneous Issues:
 
