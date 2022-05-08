@@ -52,12 +52,85 @@ class NeuralField(nn.Module):
         intensity = self.linear_relu_stack(input)
         return intensity
 
+def train_model(model, dataloaders, criterion, optimizer, num_epochs):
+    '''
+    Trains the model for given number of epochs.
+
+    params:
+    @ model: model to train
+    @ dataloaders: dictionary of dataloaders
+    @ criterion: loss function/criterion
+    @ optimizer: optimizer used 
+    @ num_epochs: number of epochs to train for
+    '''
+    since = time.time() 
+    
+    #weights of best model
+    best_model_wts = copy.deepcopy(model.state_dict())
+
+    for epoch in range(num_epochs):
+        print('Epoch {}/{}'.format(epoch+1, num_epochs))
+        print('_'*10)
+
+        # Each epoch has a training and validation phase
+        for phase in ['train', 'val']:
+            if phase == 'train':
+                model.train()
+            else:
+                model.eval()
+
+            #keep track of losses and corrects        
+            running_loss = 0.0
+
+            #Iterate over data
+            for inputs, labels in tqdm(dataloaders[phase]):
+                labels = labels.to(device).view(batch_size,-1)
+                
+                #zero the parameter gradients
+                optimizer.zero_grad()
+
+                #forward and track history if train
+                with torch.set_grad_enabled(phase == 'train'):
+                    outputs = model((inputs[0].to(device), inputs[1].to(device)))
+                    loss = criterion(outputs, labels.float())
+                
+                    if phase == 'train':
+                        loss.backward()
+                        optimizer.step()
+            
+                #statistics to keep track of
+                running_loss += loss.item()
+                
+            epoch_loss = running_loss 
+
+            print('{} Loss: {:.4f}'.format(phase, epoch_loss))
+
+        torch.save(model, './checkpoints/32/chkpt_{}.pt'.format(epoch+1))
+        print()
+
+    time_elapsed = time.time() - since
+    print('Training complete in {:.0f}m {:.0f}s'.format(time_elapsed // 60, time_elapsed % 60))
+
+    # load best model weights
+    model.load_state_dict(best_model_wts)
+    return model
+
 if __name__ == '__main__':
     encoder = initialize_encoder(128, False, True)
 
-    data_transforms = {
+    data_transforms = transforms.Compose([
         transforms.ToTensor(),
         transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
-    }
-    dataset64 = DogData(64, data_transforms, 'train', True)
+    ])
+
+    image_datasets_64 = {x: DogData(64, data_transforms, x, True) for x in ['train', 'val']}
+    image_datasets_128 = {x: DogData(128, data_transforms, x, True) for x in ['train', 'val']}
+
+    dataloaders_dict_64 = {x: DataLoader(image_datasets_64[x], batch_size = batch_size, shuffle = True, 
+                            num_workers=2) for x in ['train', 'val']}
+    dataloaders_dict_128 = {x: DataLoader(image_datasets_128[x], batch_size=batch_size, shuffle = True,
+                            num_workers= 2) for x in ['train', 'val']}
+
+
+    
     

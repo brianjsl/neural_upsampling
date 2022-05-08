@@ -31,23 +31,25 @@ class DogData(Dataset):
 
     def __len__(self):
         if self.set_name == 'train':
+            if self.with_coords:
+                return num_files(self.data_class, 'train')*(self.data_class**2)
             return num_files(self.data_class, 'train')
         elif self.set_name == 'val':
+            if self.with_coords: 
+                return num_files(self.data_class, 'val')*(self.data_class**2) 
             return num_files(self.data_class, 'val')
         elif self.set_name == 'test':
+            if self.with_coords:
+                return num_files(self.data_class, 'test')*(self.data_class**2) 
             return num_files(self.data_class, 'test')
 
-    def __getitem__(self, idx: int, coord = None):
-        image_path = self.img_dir + '/' + self.set_name + '_' + str(idx) + '_' + str(self.data_class) + '.jpg'
-        image = Image.open(image_path)
-        if self.transforms:
-            image = self.transforms(image)
+    def __getitem__(self, idx: tuple):
+        
 
-        coord = torch.Tensor([coord[0], coord[1]])
-        if self.with_coords:
-            return (image, coord)
-        else:  
-            return image
+        image_path = self.img_dir + '/' + self.set_name + '_' + str(idx) + '_' + str(self.data_class) + '.jpg'
+        image = Image.open(image_path) 
+
+
 
 #################
 ## SRCNN stuff ##
@@ -104,7 +106,7 @@ def get_srcnn_dataloaders(batch_size=5):
     return dataloaders
 
 if __name__ == '__main__':
-    # sample = DogData(64, None, 'train', False)
+    # sample = DogData(64, None, 'train', True)
     # print(len(sample))
     srcnn_sample = SRCNNDataset(None, 'train')
     print(len(srcnn_sample))
