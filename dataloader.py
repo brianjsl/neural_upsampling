@@ -51,17 +51,20 @@ class DogData(Dataset):
     def __getitem__(self, idx: int): 
 
         if self.with_coords:
-            id, rem = divmod(idx, self.data_class**2)
-            image_path = self.img_dir + '/' + self.set_name + '_' + str(id) + '_' + str(self.data_class) + '.jpg'
-            img = Image.open(image_path)
-            x_coord, y_coord = divmod(rem, self.data_class)
-            coord = torch.tensor([x_coord, y_coord]).reshape(2,-1)
-            intensity = torch.tensor(img.getpixel((x_coord, y_coord)))/255
+            if idx < (128**2)*num_files(self.data_class, 'train'):
+                id, rem = divmod(idx, self.data_class)
 
-            if self.transforms:
-                img = self.transforms(img)
+            # id, rem = divmod(idx, self.data_class**2)
+            # image_path = self.img_dir + '/' + self.set_name + '_' + str(id) + '_' + str(self.data_class) + '.jpg'
+            # img = Image.open(image_path)
+            # x_coord, y_coord = divmod(rem, self.data_class)
+            # coord = torch.tensor([x_coord, y_coord]).reshape(2,-1)
+            # intensity = torch.tensor(img.getpixel((x_coord, y_coord)))/255
+
+            # if self.transforms:
+            #     img = self.transforms(img)
             
-            return ((img, coord), intensity)
+            # return ((img, coord), intensity)
         else:
             image_path = self.img_dir + '/' + self.set_name + '_' + str(idx) + '_' + str(self.data_class) + '.jpg'
             img = Image.open(image_path)
@@ -77,13 +80,13 @@ class DogData(Dataset):
 class SRCNNDataset(DogData):
     def __init__(self, transforms, set_name: str):
         '''
-        Dataset for SRCNN: consists of two datasets of 64x64 and target 256x256 images
+        Dataset for SRCNN: consists of two datasets of 64x64 and target 128x128 images
         transforms: transforms to apply
         set name: set name (test, train, val)
         '''
         assert set_name in ['test', 'train', 'val']
         self.img_data = DogData(64, set_name, transforms, with_coords=False)
-        self.target_data = DogData(256, set_name, None, with_coords=False)
+        self.target_data = DogData(128, set_name, None, with_coords=False)
     
     def __len__(self):
         assert len(self.img_data) == len(self.target_data)
