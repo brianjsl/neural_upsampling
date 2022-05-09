@@ -105,7 +105,7 @@ def train_model(model, dataloaders, criterion, optimizer, num_epochs):
 
             print('{} Loss: {:.4f}'.format(phase, epoch_loss))
 
-        torch.save(model, './checkpoints/32/chkpt_{}.pt'.format(epoch+1))
+        torch.save(model, './neural_model/chkpts/chkpt_{}.pt'.format(epoch+1))
         print()
 
     time_elapsed = time.time() - since
@@ -117,20 +117,32 @@ def train_model(model, dataloaders, criterion, optimizer, num_epochs):
 
 if __name__ == '__main__':
     encoder = initialize_encoder(128, False, True)
+    model = NeuralField(encoder).to(device)
+
+    print('Initializing Datasets and Dataloaders...')
 
     data_transforms = transforms.Compose([
         transforms.ToTensor(),
         transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
     ])
 
-    image_datasets_64 = {x: DogData(64, data_transforms, x, True) for x in ['train', 'val']}
-    image_datasets_128 = {x: DogData(128, data_transforms, x, True) for x in ['train', 'val']}
+    image_datasets = {x: DogData(64, x, data_transforms, True) for x in ['train', 'val']}
 
-    dataloaders_dict_64 = {x: DataLoader(image_datasets_64[x], batch_size = batch_size, shuffle = True, 
+    dataloaders_dict= {x: DataLoader(image_datasets[x], batch_size = batch_size, shuffle = True, 
                             num_workers=2) for x in ['train', 'val']}
-    dataloaders_dict_128 = {x: DataLoader(image_datasets_128[x], batch_size=batch_size, shuffle = True,
-                            num_workers= 2) for x in ['train', 'val']}
+
+    print("Done Intializing Data.")
+
+    #optimizers
+    optimizer_nf =  optim.Adam(model.parameters(), lr = learning_rate)
+
+    criterion = nn.MSELoss()
+
+    model = train_model(model, dataloaders_dict, criterion, optimizer_nf, 
+                        num_epochs=num_epochs)
+    torch.save(model, 'neural_field.pt')
 
 
     
+   
     

@@ -16,7 +16,7 @@ class DogData(Dataset):
     '''
     Dataset of Dog Images
     '''
-    def __init__(self, data_class: int, transforms, set_name: str, with_coords = False):
+    def __init__(self, data_class: int, set_name, transforms = None, with_coords = False):
         '''
         data_class: 64 or 256 
         transforms: transforms to apply
@@ -25,6 +25,10 @@ class DogData(Dataset):
         assert set_name in ['test', 'train', 'val']
         self.data_class = data_class
         self.img_dir = './data/working/'+str(self.data_class)+"/"+set_name
+        
+        if not transforms:
+            transforms = ToTensor()
+
         self.transforms = transforms
         self.set_name = set_name
         self.with_coords = with_coords
@@ -43,14 +47,26 @@ class DogData(Dataset):
                 return num_files(self.data_class, 'test')*(self.data_class**2) 
             return num_files(self.data_class, 'test')
 
-    def __getitem__(self, idx: tuple):
-        image_path = self.img_dir + '/' + self.set_name + '_' + str(idx) + '_' + str(self.data_class) + '.jpg'
-        image = Image.open(image_path)
-        image = ToTensor()(image)
-        if self.transforms:
-            image = self.transforms(image)
-        return image
+    def __getitem__(self, idx: int): 
 
+        if self.with_coords:
+            id, rem = divmod(idx, self.data_class**2)
+            image_path = self.img_dir + '/' + self.set_name + '_' + str(id) + '_' + str(self.data_class) + '.jpg'
+            img = Image.open(image_path)
+            x_coord, y_coord = divmod(rem, self.data_class)
+            coord = torch.tensor([x_coord, y_coord]).reshape(2,-1)
+            intensity = torch.tensor(img.getpixel((x_coord, y_coord)))/255
+
+            if self.transforms:
+                img = self.transforms(img)
+            
+            return ((img, coord), intensity)
+        else:
+            image_path = self.img_dir + '/' + self.set_name + '_' + str(idx) + '_' + str(self.data_class) + '.jpg'
+            img = Image.open(image_path)
+            if self.transforms:
+                img = self.transforms(img)
+            return img
 
 
 #################
@@ -65,8 +81,8 @@ class SRCNNDataset(DogData):
         set name: set name (test, train, val)
         '''
         assert set_name in ['test', 'train', 'val']
-        self.img_data = DogData(64, transforms, set_name, with_coords=False)
-        self.target_data = DogData(256, None, set_name, with_coords=False)
+        self.img_data = DogData(64, set_name, transforms, with_coords=False)
+        self.target_data = DogData(256, set_name, None, with_coords=False)
     
     def __len__(self):
         assert len(self.img_data) == len(self.target_data)
@@ -108,7 +124,7 @@ def get_srcnn_dataloaders(batch_size=5):
     return dataloaders
 
 if __name__ == '__main__':
-    # sample = DogData(64, None, 'train', True)
-    # print(len(sample))
-    srcnn_sample = SRCNNDataset(None, 'train')
-    print(len(srcnn_sample))
+    sample = DogData(64, 'train', with_coords=True)
+    print(sample[3][0][0].shape)
+    # srcnn_sample = SRCNNDataset(None, 'train')
+    # print(len(srcnn_sample))
