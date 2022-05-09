@@ -6,10 +6,10 @@ import subprocess
 import shutil
 
 
-data_keys = ['Linnaeus_dog_64X64', 'Linnaeus_dog_256X256']
+data_keys = ['Linnaeus_dog_64X64', 'Linnaeus_dog_128X128']
 data_urls = {'Linnaeus_dog_64X64': 'https://www.dropbox.com/s/9juhj4pdepaev27/Linnaeus_dog_64.zip?dl=0',
-             'Linnaeus_dog_256X256': 'https://www.dropbox.com/s/44ui4lt2ah8ve4g/Linnaeus_dog_256.zip?dl=0'}
-data_names = {'Linnaeus_dog_64X64': '64', 'Linnaeus_dog_256X256': '256'}
+             'Linnaeus_dog_128X128': 'https://www.dropbox.com/s/vtwsadpzp4a0ixt/Linnaeus_dog_128.zip?dl=0'}
+data_names = {'Linnaeus_dog_64X64': '64', 'Linnaeus_dog_128X128': '128'}
 
 def check_dataset_dir(data_dir):
     '''

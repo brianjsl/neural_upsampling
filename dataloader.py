@@ -36,7 +36,8 @@ class DogData(Dataset):
     def __len__(self):
         if self.set_name == 'train':
             if self.with_coords:
-                return num_files(self.data_class, 'train')*(self.data_class**2)
+                return num_files(self.data_class, 'train')*(256**2)+num_files(self.data_class, 'val')*(self.data_class**2)\
+                    +num_files(self.data_class, 'test')*(self.data_class**2)
             return num_files(self.data_class, 'train')
         elif self.set_name == 'val':
             if self.with_coords: 
@@ -125,6 +126,6 @@ def get_srcnn_dataloaders(batch_size=5):
 
 if __name__ == '__main__':
     sample = DogData(64, 'train', with_coords=True)
-    print(sample[3][0][0].shape)
+    print(len(sample))
     # srcnn_sample = SRCNNDataset(None, 'train')
     # print(len(srcnn_sample))

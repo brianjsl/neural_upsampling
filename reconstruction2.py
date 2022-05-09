@@ -47,17 +47,17 @@ def argparser():
 
 if __name__ == '__main__':
     config = argparser()
-    model = torch.load('./neural_model/chkpts/chkpt_6.pt', map_location=device)
+    model = torch.load('./neural_model/chkpts/chkpt_40.pt', map_location=device)
     model.eval()
 
-    # invTrans = transforms.Normalize(
-    #             mean=[-0.485 / 0.229, -0.456 / 0.224, -0.406 / 0.225],
-    #             std=[1 / 0.229, 1 / 0.224, 1 / 0.225]
-    # )
+    invTrans = transforms.Normalize(
+                mean=[-0.485 / 0.229, -0.456 / 0.224, -0.406 / 0.225],
+                std=[1 / 0.229, 1 / 0.224, 1 / 0.225]
+    )
 
     data_transforms = transforms.Compose([
                 transforms.ToTensor(),
-                # transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+                transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
     ])
     reconstructed = torch.zeros((3,64,64)).to(device)
     image = Image.open(os.path.join('./data/working', config.image_class, config.set_class, 
@@ -83,7 +83,7 @@ if __name__ == '__main__':
                         config.set_class+'_'+config.image_num+'_256.jpg')) 
     high_quality_image = transforms.ToTensor()(high_quality_image)
     
-    # image = invTrans(image)
+    image = invTrans(image)
     plt.subplot(121); plt.imshow(image.squeeze().permute(1,2,0).detach().numpy()); plt.title('Original Image')
     plt.subplot(122); plt.imshow(reconstructed.squeeze().permute(1,2,0).detach().numpy()); plt.title('Reconstructed Image')
     plt.show()

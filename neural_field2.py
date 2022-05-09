@@ -122,7 +122,8 @@ if __name__ == '__main__':
     print('Initializing Datasets and Dataloaders...')
 
     data_transforms = transforms.Compose([
-        transforms.ToTensor()
+        transforms.ToTensor(),
+        transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
     ])
 
     image_datasets = {x: DogData(64, x, data_transforms, True) for x in ['train', 'val']}
