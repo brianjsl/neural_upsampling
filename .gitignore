@@ -3,7 +3,7 @@ data/
 checkpoints/
 src/models
 srcnn_model/
-neural_model/
+neural_model/chkpts
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
