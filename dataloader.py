@@ -179,6 +179,7 @@ def get_srcnn_dataloaders(batch_size=5):
 
 if __name__ == '__main__':
     sample = DogData(64, 'train', with_coords=True)
-    print(sample[860159])
+    plt.imshow(sample[819200][0][0].permute(1,2,0))
+    plt.show()
     # srcnn_sample = SRCNNDataset(None, 'train')
     # print(len(srcnn_sample))
