@@ -51,20 +51,70 @@ class DogData(Dataset):
     def __getitem__(self, idx: int): 
 
         if self.with_coords:
-            if idx < (128**2)*num_files(self.data_class, 'train'):
-                id, rem = divmod(idx, self.data_class)
+            if self.set_name == 'train':
+                if idx < (128**2)*num_files(self.data_class, 'train'):
+                    id, rem = divmod(idx, 128**2)
+                    image_path1 = './data/working/'+str(64)+"/"+self.set_name+'/'+self.set_name+'_'+str(id)+'_'+\
+                        str(64)+'.jpg'  
+                    image_path2 = './data/working/'+str(128)+"/"+self.set_name+'/'+self.set_name+'_'+str(id)+'_'+\
+                        str(128)+'.jpg'
+                    img1 = Image.open(image_path1)
+                    img2 = Image.open(image_path2)
+                    x_coord, y_coord = divmod(rem, 128)
+                    coord = torch.tensor([0.5*x_coord, 0.5*y_coord]).reshape(2,-1)
+                    intensity = torch.tensor(img2.getpixel((x_coord, y_coord)))/255 
 
-            # id, rem = divmod(idx, self.data_class**2)
-            # image_path = self.img_dir + '/' + self.set_name + '_' + str(id) + '_' + str(self.data_class) + '.jpg'
-            # img = Image.open(image_path)
-            # x_coord, y_coord = divmod(rem, self.data_class)
-            # coord = torch.tensor([x_coord, y_coord]).reshape(2,-1)
-            # intensity = torch.tensor(img.getpixel((x_coord, y_coord)))/255
+                    if self.transforms:
+                        img1 = self.transforms(img1)  
+                    
+                    return ((img1, coord), intensity)
 
-            # if self.transforms:
-            #     img = self.transforms(img)
+                elif (128**2)*num_files(self.data_class, 'train')<= idx < \
+                    (128**2)*num_files(self.data_class, 'train')+ num_files(self.data_class, 'val')*(self.data_class**2):
+                    new_idx = idx - (128**2)*num_files(self.data_class, 'train')
+                    id, rem = divmod(new_idx, 64**2)
+                    image_path = './data/working/'+str(64)+"/val/val_"+str(id)+'_'+\
+                        str(64)+'.jpg'
+
+                    img = Image.open(image_path)
+                    x_coord, y_coord = divmod(rem, 64)
+                    coord = torch.tensor([x_coord, y_coord]).reshape(2,-1)
+                    intensity = torch.tensor(img.getpixel((x_coord, y_coord)))/255 
+
+                    if self.transforms:
+                        img = self.transforms(img)
+
+                    return ((img, coord), intensity) 
+
+                else:
+                    new_idx = idx - (128**2)*num_files(self.data_class, 'train') - \
+                        num_files(self.data_class, 'val')*(self.data_class**2)
+                    id, rem = divmod(new_idx, 64**2)
+                    image_path = './data/working/'+str(64)+"/test/test_"+str(id)+'_'+\
+                        str(64)+'.jpg'
+
+                    img = Image.open(image_path)
+                    x_coord, y_coord = divmod(rem, 64)
+                    coord = torch.tensor([x_coord, y_coord]).reshape(2,-1)
+                    intensity = torch.tensor(img.getpixel((x_coord, y_coord)))/255 
+
+                    if self.transforms:
+                        img = self.transforms(img)
+
+                    return ((img, coord), intensity)  
             
-            # return ((img, coord), intensity)
+            else:
+                id, rem = divmod(idx, self.data_class**2)
+                image_path = self.img_dir + '/' + self.set_name + '_' + str(id) + '_' + str(self.data_class) + '.jpg'
+                img = Image.open(image_path)
+                x_coord, y_coord = divmod(rem, self.data_class)
+                coord = torch.tensor([x_coord, y_coord]).reshape(2,-1)
+                intensity = torch.tensor(img.getpixel((x_coord, y_coord)))/255
+
+                if self.transforms:
+                    img = self.transforms(img)
+                
+                return ((img, coord), intensity)
         else:
             image_path = self.img_dir + '/' + self.set_name + '_' + str(idx) + '_' + str(self.data_class) + '.jpg'
             img = Image.open(image_path)
@@ -129,6 +179,6 @@ def get_srcnn_dataloaders(batch_size=5):
 
 if __name__ == '__main__':
     sample = DogData(64, 'train', with_coords=True)
-    print(len(sample))
+    print(sample[860159])
     # srcnn_sample = SRCNNDataset(None, 'train')
     # print(len(srcnn_sample))
