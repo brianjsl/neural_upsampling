@@ -18,7 +18,7 @@ class DogData(Dataset):
     '''
     def __init__(self, data_class: int, set_name, transforms = None, with_coords = False):
         '''
-        data_class: 64 or 256 
+        data_class: 64 or 128 
         transforms: transforms to apply
         set name: set name (test, train, val)
         '''
@@ -36,7 +36,7 @@ class DogData(Dataset):
     def __len__(self):
         if self.set_name == 'train':
             if self.with_coords:
-                return num_files(self.data_class, 'train')*(256**2)+num_files(self.data_class, 'val')*(self.data_class**2)\
+                return num_files(self.data_class, 'train')*(128**2)+num_files(self.data_class, 'val')*(self.data_class**2)\
                     +num_files(self.data_class, 'test')*(self.data_class**2)
             return num_files(self.data_class, 'train')
         elif self.set_name == 'val':

@@ -110,7 +110,7 @@ def argparser():
                         help = 'path for working data direcotry'
                         )
     parser.add_argument('--train_val_test_size', type=int, nargs='+',
-                        default=[100, 10, 10], help='Train/Val/Test size')
+                        default=[50, 10, 10], help='Train/Val/Test size')
     parser.add_argument('--random_seed', type=int, default=123)
     config = parser.parse_args()
     return config
