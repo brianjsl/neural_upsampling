@@ -10,8 +10,15 @@ import time
 import copy
 import os
 from srcnn_model import SRCNN
+from fsrcnn_model import FSRCNN
 from functools import partial
 from tqdm import tqdm
+
+#Which SRCNN model to train
+use_SRCNN = True
+srcnn_epochs=100
+use_FSRCNN = False
+fsrcnn_epochs=500
 
 tqdm = partial(tqdm, position=0, leave=True)
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -20,7 +27,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 all_dataloaders = dataloader.get_srcnn_dataloaders(batch_size=1)
 
 #train the srcnn
-def train_model(model, dataloaders, criterion, optimizer, save_dir = None, save_all_epochs=False, num_epochs=25):
+def train_model(model, dataloaders, criterion, optimizer, save_dir = None, save_all_epochs=False, num_epochs=25, use_fsrcnn=False):
     '''
     model: The NN to train
     dataloaders: A dictionary containing at least the keys 
@@ -69,10 +76,15 @@ def train_model(model, dataloaders, criterion, optimizer, save_dir = None, save_
                 # track history if only in train
                 with torch.set_grad_enabled(phase == 'train'):
                     # Get model outputs and calculate loss
-                    preprocessed_images = F.interpolate(images, scale_factor=4, mode='bicubic', align_corners=False)
-                    model = model.to(device)
-                    outputs = model(preprocessed_images)
-                    loss = criterion(outputs, targets)
+                    if not use_fsrcnn:
+                        preprocessed_images = F.interpolate(images, scale_factor=2, mode='bicubic', align_corners=False)
+                        model = model.to(device)
+                        outputs = model(preprocessed_images)
+                        loss = criterion(outputs, targets)
+                    else:
+                        model = model.to(device)
+                        outputs = model(images)
+                        loss = criterion(outputs, targets)
 
                     # backprop + optimize only if in training phase
                     if phase == 'train':
@@ -130,16 +142,30 @@ def get_loss():
 
 if __name__ == '__main__':
     #variables and parameters
-    model = SRCNN()
     criterion = get_loss()
     lr = 1e-4
-    optimizer = make_optimizer(model, lr)
+    if use_SRCNN:
+        srcnn_model = SRCNN()
+        optimizer = make_optimizer(srcnn_model, lr)
 
-    model, val_acc_hist, train_acc_hist = train_model(
-                                            model=model,
-                                            dataloaders=all_dataloaders,
-                                            criterion=criterion,
-                                            optimizer=optimizer,
-                                            save_dir='srcnn_model',
-                                            num_epochs=10
-                                        )
+        srcnn_model, val_acc_hist, train_acc_hist = train_model(
+                                                model=srcnn_model,
+                                                dataloaders=all_dataloaders,
+                                                criterion=criterion,
+                                                optimizer=optimizer,
+                                                save_dir='srcnn_model',
+                                                num_epochs=srcnn_epochs
+                                            )
+    elif use_FSRCNN:
+        fsrcnn_model = FSRCNN(2) #upscale from 64 to 128
+        optimizer = make_optimizer(fsrcnn_model, lr)
+
+        fsrcnn_model, val_acc_hist, train_acc_hist = train_model(
+                                                model=fsrcnn_model,
+                                                dataloaders=all_dataloaders,
+                                                criterion=criterion,
+                                                optimizer=optimizer,
+                                                save_dir='fsrcnn_model',
+                                                num_epochs=fsrcnn_epochs,
+                                                use_fsrcnn=True
+                                            )
