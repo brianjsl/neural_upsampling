@@ -32,14 +32,14 @@ def argparser():
     )
 
     parser.add_argument('--set_class', type = str, 
-                        default = 'train',
+                        default = 'test',
                         help = 'name of set')
     parser.add_argument('--image_class', type = str, 
                         default = '64',
                         help='class of image'
                         )
     parser.add_argument('--image_num', type = str, 
-                        default = '3',
+                        default = '4',
                         help='number of image'
                         )
     config = parser.parse_args()
@@ -79,8 +79,8 @@ if __name__ == '__main__':
             output = linear_relu_stack(input).squeeze()
             reconstructed[:,j,i] = output[:] 
     
-    high_quality_image = Image.open(os.path.join('./data/working', '256', config.set_class, 
-                        config.set_class+'_'+config.image_num+'_256.jpg')) 
+    high_quality_image = Image.open(os.path.join('./data/working', '128', config.set_class, 
+                        config.set_class+'_'+config.image_num+'_128.jpg')) 
     high_quality_image = transforms.ToTensor()(high_quality_image)
     
     image = invTrans(image)

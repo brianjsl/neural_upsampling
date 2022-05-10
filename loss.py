@@ -1,14 +1,19 @@
-import torch
-from torch.utils.tensorboard import SummaryWriter
+import matplotlib.pyplot as plt
 
-writer = SummaryWriter()
+plt.plot([i for i in range(40)], 
+[733.7712,540.2130,474.2035,432.9407,404.2678,382.2998,364.3024,349.7418,
+337.4888,326.6032,317.8650,309.2354,301.9032,295.0951,289.8389,284.0543,
+278.5263,274.2177,269.9842,266.2418,262.1122,257.9851,254.6742,251.4933,
+248.9729,245.7421,243.3732,240.4105,238.2063, 235.9811, 233.5368,231.6295,
+229.4353,227.5715,225.8414,223.7198,222.1294,220.5361,218.5389,217.2917], label='Training')
+plt.plot([i for i in range(40)], 
+[28.9461, 24.6587, 21.7837, 20.1039, 19.3399, 18.7316, 17.4714, 16.4245, 15.3089, 15.5881, 
+15.8549, 14.7239, 14.7305, 13.9881, 14.5308, 13.9609, 13.3481, 13.2825, 13.1350, 12.4939, 
+12.2932, 12.1901, 11.3631, 11.4862, 11.6890, 11.7405, 10.9014, 11.0456, 11.7997, 11.2321, 
+11.1218, 10.6083, 11.3086, 10.7592, 10.7942, 10.8044, 10.1764, 10.3795, 10.4649, 9.5520], 
+label='Validation')
 
-writer.add_scalar("Loss/train", 733.7712, 1)
-writer.add_scalar("Loss/train", 540.2130, 2)
-writer.add_scalar("Loss/train", 474.2035, 3)
-writer.add_scalar("Loss/train", 432.9407, 4)
-writer.add_scalar("Loss/train", 404.2678, 5)
-writer.add_scalar("Loss/train", 382.2998, 6)
-writer.add_scalar("Loss/train", 364.3024, 7)
-writer.flush()
-
+plt.xlabel('Epochs')
+plt.ylabel('Loss')
+plt.legend()
+plt.show()

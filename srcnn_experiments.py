@@ -87,6 +87,7 @@ def get_bilinear_statistics(low_res, high_res):
     PSNR = 10 * torch.log10(1. / MSE)
     return np.array([amount_time, MSE.item(), PSNR.item()])
 
+
 if __name__ == '__main__':
     srcnn_sample = SRCNNDataset(None, 'val')
     if run_experiments:
