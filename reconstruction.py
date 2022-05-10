@@ -39,7 +39,7 @@ def argparser():
                         help='class of image'
                         )
     parser.add_argument('--image_num', type = str, 
-                        default = '17',
+                        default = '2',
                         help='number of image'
                         )
     config = parser.parse_args()
@@ -47,7 +47,7 @@ def argparser():
 
 if __name__ == '__main__':
     config = argparser()
-    model = torch.load('./neural_model/chkpts/chkpt_21.pt', map_location=device)
+    model = torch.load('./neural_model/chkpts/chkpt_40.pt', map_location=device)
     model.eval()
 
     data_transforms = transforms.Compose([
