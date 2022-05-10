@@ -11,6 +11,8 @@ from tqdm import tqdm
 import torchvision.models as models
 import copy
 
+dtype = torch.cuda.FloatTensor if torch.cuda.is_available() else torch.FloatTensor
+
 batch_size = 32
 num_epochs = 40
 learning_rate = 1e-4
@@ -84,6 +86,7 @@ def train_model(model, dataloaders, criterion, optimizer, num_epochs):
 
             #Iterate over data
             for inputs, labels in tqdm(dataloaders[phase]):
+                
                 labels = labels.to(device).view(batch_size,-1)
                 
                 #zero the parameter gradients
@@ -128,8 +131,8 @@ if __name__ == '__main__':
     image_datasets = {x: DogData(64, x, data_transforms, True) for x in ['train', 'val']}
 
     dataloaders_dict= {x: DataLoader(image_datasets[x], batch_size = batch_size, shuffle = True, 
-                            num_workers=2) for x in ['train', 'val']}
-
+                            num_workers=2) for x in ['train', 'val']} 
+    
     print("Done Initializing Data.")
 
     #optimizers

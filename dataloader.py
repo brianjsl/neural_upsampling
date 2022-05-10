@@ -61,7 +61,7 @@ class DogData(Dataset):
                     img1 = Image.open(image_path1)
                     img2 = Image.open(image_path2)
                     x_coord, y_coord = divmod(rem, 128)
-                    coord = torch.tensor([0.5*x_coord, 0.5*y_coord]).reshape(2,-1)
+                    coord = torch.tensor([0.5*x_coord, 0.5*y_coord]).reshape(2,-1).float()
                     intensity = torch.tensor(img2.getpixel((x_coord, y_coord)))/255 
 
                     if self.transforms:
@@ -78,7 +78,7 @@ class DogData(Dataset):
 
                     img = Image.open(image_path)
                     x_coord, y_coord = divmod(rem, 64)
-                    coord = torch.tensor([x_coord, y_coord]).reshape(2,-1)
+                    coord = torch.tensor([x_coord, y_coord]).reshape(2,-1).float()
                     intensity = torch.tensor(img.getpixel((x_coord, y_coord)))/255 
 
                     if self.transforms:
@@ -95,7 +95,7 @@ class DogData(Dataset):
 
                     img = Image.open(image_path)
                     x_coord, y_coord = divmod(rem, 64)
-                    coord = torch.tensor([x_coord, y_coord]).reshape(2,-1)
+                    coord = torch.tensor([x_coord, y_coord]).reshape(2,-1).float()
                     intensity = torch.tensor(img.getpixel((x_coord, y_coord)))/255 
 
                     if self.transforms:
@@ -108,7 +108,7 @@ class DogData(Dataset):
                 image_path = self.img_dir + '/' + self.set_name + '_' + str(id) + '_' + str(self.data_class) + '.jpg'
                 img = Image.open(image_path)
                 x_coord, y_coord = divmod(rem, self.data_class)
-                coord = torch.tensor([x_coord, y_coord]).reshape(2,-1)
+                coord = torch.tensor([x_coord, y_coord]).reshape(2,-1).float()
                 intensity = torch.tensor(img.getpixel((x_coord, y_coord)))/255
 
                 if self.transforms:
