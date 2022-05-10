@@ -47,7 +47,7 @@ def argparser():
 
 if __name__ == '__main__':
     config = argparser()
-    model = torch.load('./neural_model/chkpts/chkpt_15.pt', map_location=device)
+    model = torch.load('./neural_model/chkpts/chkpt_21.pt', map_location=device)
     model.eval()
 
     data_transforms = transforms.Compose([
