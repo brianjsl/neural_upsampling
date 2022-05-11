@@ -18,12 +18,16 @@ python3 generator.py
 The corresponding images will be stored in the 'data' folder. You can alter the data size and other
 parameters by adding additional flags. The images should be stored in ./data/working. 
 
-## Training the SRCNN
-Create a directory 'srcnn_model', then run srcnn_train.py:
+## Training the SRCNN and FSRCNN
+To train the SRCNN, create a directory 'srcnn_model'. In srcnn_train.py, set `use_srcnn` to `True` and `use_fsrcnn` to `False` 
+Then run srcnn_train.py:
 ```
 python3 srcnn_train.py 
 ```
 The directory will contain two model weights which can be used later, 'weights_best_val_acc.pt' and 'weights_last.pt'.
+
+To train the FSRCNN, create a directory 'fsrcnn_model'. In srcnn_train.py, set `use_srcnn` to `False` and `use_fsrcnn` to `True`.
+Then run srcnn_train.py. The directory will contain two model weights which can be used later, 'weights_best_val_acc.pt' and 'weights_last.pt'.
 
 ## Training the Neural Field
 
