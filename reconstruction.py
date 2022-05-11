@@ -32,14 +32,14 @@ def argparser():
     )
 
     parser.add_argument('--set_class', type = str, 
-                        default = 'train',
+                        default = 'test',
                         help = 'name of set')
     parser.add_argument('--image_class', type = int, 
-                        default = 64,
+                        default = 128,
                         help='class of image'
                         )
     parser.add_argument('--image_num', type = str, 
-                        default = '2',
+                        default = '4',
                         help='number of image'
                         )
     config = parser.parse_args()
@@ -84,29 +84,30 @@ if __name__ == '__main__':
                         config.set_class+'_'+config.image_num+'_64.jpg'))
     image = data_transforms(image)
     image = torch.unsqueeze(image,0).to(device)
-    plt.imshow(reconstruct(image).permute(1,2,0))
-    plt.show()
-    # plt.figure(figsize=[8,4]);
+    # plt.imshow(reconstruct(image).permute(1,2,0))
+    # plt.show()
+    plt.figure(figsize=[8,4]);
 
-    # encoder = model.encoder
-    # linear_relu_stack = model.linear_relu_stack
+    encoder = model.encoder
+    linear_relu_stack = model.linear_relu_stack
 
-    # z = encoder(image)
+    z = encoder(image)
 
-    # step = 0.5 if config.image_class == 128 else 1
-    # for i in tqdm(range(config.image_class)): 
-    #     for j in range(config.image_class): 
-    #         coordinates = torch.tensor([step*i,step*j]).view(1,2).to(device)
-    #         input = torch.cat((z,coordinates),1)
-    #         output = linear_relu_stack(input).squeeze()
-    #         reconstructed[:,j,i] = output[:] 
+    step = 0.5 if config.image_class == 128 else 1
+    for i in tqdm(range(config.image_class)): 
+        for j in range(config.image_class): 
+            coordinates = torch.tensor([step*i,step*j]).view(1,2).to(device)
+            input = torch.cat((z,coordinates),1)
+            output = linear_relu_stack(input).squeeze()
+            reconstructed[:,j,i] = output[:] 
     
-    # high_quality_image = Image.open(os.path.join('./data/working', '128', config.set_class, 
-    #                     config.set_class+'_'+config.image_num+'_128.jpg')) 
-    # high_quality_image = transforms.ToTensor()(high_quality_image)
+    high_quality_image = Image.open(os.path.join('./data/working', '128', config.set_class, 
+                        config.set_class+'_'+config.image_num+'_128.jpg')) 
+    high_quality_image = transforms.ToTensor()(high_quality_image)
     
-    # plot_image = high_quality_image if config.image_class == 128 else image
-    # # image = invTrans(image)
+    plot_image = high_quality_image if config.image_class == 128 else image
+    # image = invTrans(image)
+    save_image(reconstructed, 'new_regime.jpg')
     # plt.subplot(121); plt.imshow(plot_image.squeeze().permute(1,2,0).detach().numpy()); plt.title('Original Image')
     # plt.subplot(122); plt.imshow(reconstructed.squeeze().permute(1,2,0).detach().numpy()); plt.title('Reconstructed Image')
     # plt.show()
