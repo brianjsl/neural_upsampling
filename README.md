@@ -19,7 +19,7 @@ The corresponding images will be stored in the 'data' folder. You can alter the 
 parameters by adding additional flags. The images should be stored in ./data/working. 
 
 ## Training the SRCNN and FSRCNN
-To train the SRCNN, create a directory 'srcnn_model'. In srcnn_train.py, set `use_srcnn` to `True` and `use_fsrcnn` to `False` 
+To train the SRCNN, create a directory 'srcnn_model'. In srcnn_train.py, set `use_srcnn` to `True` and `use_fsrcnn` to `False`.
 Then run srcnn_train.py:
 ```
 python3 srcnn_train.py 
@@ -42,11 +42,12 @@ sbatch neural_field_train.slurm
 in the command line. 
 
 ## Recreating Experiments
-Once the SRCNN is trained, run srcnn_experiments.py:
+Once the SRCNN and FSRCNN are both trained, set `run_experiments` to `True` in srcnn_experiments.py. Then, run srcnn_experiments.py.
 ```
 python3 srcnn_experiments.py
 ```
-It will print the average time, MSE, and PSNR of the SRCNN and bilinear interpolation.
+It will print the average time, MSE, and PSNR of the SRCNN, FSRCNN, and bilinear interpolation. To visualize upsampling of these models
+in action, set `run_experiments` to `False` and `visualize_upsample` to `True`. Then, run srcnn_experiments.py.
 
 Once the Neural Field is trained, run 
 ```
